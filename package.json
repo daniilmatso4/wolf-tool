@@ -1,6 +1,6 @@
 {
   "name": "wolf-of-wallstreet-tool",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Wolf of Wall Street Sales Prospecting Tool for tekta.ai",
   "main": "./out/main/index.js",
   "scripts": {
