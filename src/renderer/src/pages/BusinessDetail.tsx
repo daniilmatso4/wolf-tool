@@ -6,6 +6,8 @@ import { useGamificationStore } from '../stores/gamificationStore'
 import { formatPlaceTypes } from '../lib/categories'
 import SalesBrief from '../components/business/SalesBrief'
 import OwnerCard from '../components/business/OwnerCard'
+import { Phone, Mail, MapPin, Globe, Star, Tag, User, Smartphone, AtSign, ArrowLeft, Handshake, FileText, DollarSign, ArrowRightLeft, Circle } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { Activity, ActivityType, ActivityOutcome } from '../types/activity'
 import type { LeadStatus } from '../types/lead'
 
@@ -94,7 +96,9 @@ export default function BusinessDetail() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/pipeline')} className="btn-ghost text-sm">{'\u2190'} Back</button>
+          <button onClick={() => navigate('/pipeline')} className="btn-ghost text-sm flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
           <h1 className="text-2xl font-bold text-white">{lead.name}</h1>
           {!lead.has_website && (
             <span className="status-badge bg-gold/20 text-gold border border-gold/30">
@@ -112,20 +116,20 @@ export default function BusinessDetail() {
           <div className="card">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Contact Info</h3>
             <div className="grid grid-cols-2 gap-4">
-              <InfoRow label="Phone" value={lead.phone} icon={'\u{1F4DE}'} isLink={lead.phone ? `tel:${lead.phone}` : undefined} />
-              <InfoRow label="Email" value={lead.email} icon={'\u{2709}'} isLink={lead.email ? `mailto:${lead.email}` : undefined} />
-              <InfoRow label="Address" value={lead.address} icon={'\u{1F4CD}'} />
-              <InfoRow label="Website" value={lead.has_website ? lead.website : 'No website'} icon={'\u{1F310}'} />
-              <InfoRow label="Rating" value={lead.rating ? `${lead.rating} \u2B50 (${lead.rating_count} reviews)` : 'N/A'} icon={'\u2B50'} />
-              <InfoRow label="Category" value={formatPlaceTypes(lead.types)} icon={'\u{1F3F7}'} />
+              <InfoRow label="Phone" value={lead.phone} Icon={Phone} isLink={lead.phone ? `tel:${lead.phone}` : undefined} />
+              <InfoRow label="Email" value={lead.email} Icon={Mail} isLink={lead.email ? `mailto:${lead.email}` : undefined} />
+              <InfoRow label="Address" value={lead.address} Icon={MapPin} />
+              <InfoRow label="Website" value={lead.has_website ? lead.website : 'No website'} Icon={Globe} />
+              <InfoRow label="Rating" value={lead.rating ? `${lead.rating} (${lead.rating_count} reviews)` : 'N/A'} Icon={Star} />
+              <InfoRow label="Category" value={formatPlaceTypes(lead.types)} Icon={Tag} />
               {lead.owner_name && (
-                <InfoRow label="Owner" value={`${lead.owner_name}${lead.owner_title ? ` (${lead.owner_title})` : ''}`} icon={'\u{1F464}'} />
+                <InfoRow label="Owner" value={`${lead.owner_name}${lead.owner_title ? ` (${lead.owner_title})` : ''}`} Icon={User} />
               )}
               {lead.owner_phone && (
-                <InfoRow label="Owner Phone" value={lead.owner_phone} icon={'\u{1F4F1}'} isLink={`tel:${lead.owner_phone}`} />
+                <InfoRow label="Owner Phone" value={lead.owner_phone} Icon={Smartphone} isLink={`tel:${lead.owner_phone}`} />
               )}
               {lead.owner_email && (
-                <InfoRow label="Owner Email" value={lead.owner_email} icon={'\u{1F4E7}'} isLink={`mailto:${lead.owner_email}`} />
+                <InfoRow label="Owner Email" value={lead.owner_email} Icon={AtSign} isLink={`mailto:${lead.owner_email}`} />
               )}
             </div>
           </div>
@@ -134,10 +138,18 @@ export default function BusinessDetail() {
           <div className="card">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Quick Actions</h3>
             <div className="flex gap-3">
-              <button onClick={() => setShowLogModal('call')} className="btn-gold flex-1">{'\u{1F4DE}'} Log Call</button>
-              <button onClick={() => setShowLogModal('email')} className="btn-outline flex-1">{'\u{2709}'} Log Email</button>
-              <button onClick={() => setShowLogModal('meeting')} className="btn-outline flex-1">{'\u{1F91D}'} Log Meeting</button>
-              <button onClick={() => setShowLogModal('note')} className="btn-ghost flex-1 border border-navy-600">{'\u{1F4DD}'} Add Note</button>
+              <button onClick={() => setShowLogModal('call')} className="btn-gold flex-1 flex items-center justify-center gap-2">
+                <Phone className="w-4 h-4" /> Log Call
+              </button>
+              <button onClick={() => setShowLogModal('email')} className="btn-outline flex-1 flex items-center justify-center gap-2">
+                <Mail className="w-4 h-4" /> Log Email
+              </button>
+              <button onClick={() => setShowLogModal('meeting')} className="btn-outline flex-1 flex items-center justify-center gap-2">
+                <Handshake className="w-4 h-4" /> Log Meeting
+              </button>
+              <button onClick={() => setShowLogModal('note')} className="btn-ghost flex-1 border border-navy-600 flex items-center justify-center gap-2">
+                <FileText className="w-4 h-4" /> Add Note
+              </button>
             </div>
           </div>
 
@@ -163,7 +175,7 @@ export default function BusinessDetail() {
               ) : (
                 activities.map((a) => (
                   <div key={a.id} className="flex items-start gap-3 py-2 border-b border-navy-700 last:border-0">
-                    <span className="text-lg mt-0.5">{activityIcon(a.type)}</span>
+                    <span className="mt-0.5"><ActivityIcon type={a.type} /></span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-white capitalize">{a.type.replace('_', ' ')}</span>
@@ -284,10 +296,10 @@ export default function BusinessDetail() {
   )
 }
 
-function InfoRow({ label, value, icon, isLink }: { label: string; value?: string | null; icon: string; isLink?: string }) {
+function InfoRow({ label, value, Icon, isLink }: { label: string; value?: string | null; Icon: LucideIcon; isLink?: string }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="mt-0.5">{icon}</span>
+      <Icon className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" />
       <div>
         <p className="text-xs text-gray-500">{label}</p>
         {isLink && value ? (
@@ -300,16 +312,18 @@ function InfoRow({ label, value, icon, isLink }: { label: string; value?: string
   )
 }
 
-function activityIcon(type: string): string {
-  switch (type) {
-    case 'call': return '\u{1F4DE}'
-    case 'email': return '\u{2709}'
-    case 'meeting': return '\u{1F91D}'
-    case 'note': return '\u{1F4DD}'
-    case 'deal_closed': return '\u{1F4B0}'
-    case 'status_change': return '\u{1F504}'
-    default: return '\u{25CF}'
-  }
+const activityIconMap: Record<string, LucideIcon> = {
+  call: Phone,
+  email: Mail,
+  meeting: Handshake,
+  note: FileText,
+  deal_closed: DollarSign,
+  status_change: ArrowRightLeft,
+}
+
+function ActivityIcon({ type }: { type: string }) {
+  const Icon = activityIconMap[type] || Circle
+  return <Icon className="w-5 h-5 text-gray-400" />
 }
 
 function outcomeColor(outcome: string): string {

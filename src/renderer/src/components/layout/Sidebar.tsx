@@ -2,14 +2,16 @@ import { NavLink } from 'react-router-dom'
 import { useGamificationStore } from '../../stores/gamificationStore'
 import { useAuthStore } from '../../stores/authStore'
 import { getLevelForXP, getXPProgress } from '../../lib/levels'
+import { BarChart3, Search, ClipboardList, Bot, Award, Settings } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
-const navItems = [
-  { path: '/', label: 'Dashboard', icon: '\u{1F4CA}', premium: false },
-  { path: '/discover', label: 'Lead Discovery', icon: '\u{1F50D}', premium: false },
-  { path: '/pipeline', label: 'Pipeline', icon: '\u{1F4CB}', premium: false },
-  { path: '/agents', label: 'AI Agents', icon: '\u{1F916}', premium: true },
-  { path: '/achievements', label: 'Achievements', icon: '\u{1F3C6}', premium: false },
-  { path: '/settings', label: 'Settings', icon: '\u2699\uFE0F', premium: false }
+const navItems: { path: string; label: string; Icon: LucideIcon; premium: boolean }[] = [
+  { path: '/', label: 'Dashboard', Icon: BarChart3, premium: false },
+  { path: '/discover', label: 'Lead Discovery', Icon: Search, premium: false },
+  { path: '/pipeline', label: 'Pipeline', Icon: ClipboardList, premium: false },
+  { path: '/agents', label: 'AI Agents', Icon: Bot, premium: true },
+  { path: '/achievements', label: 'Achievements', Icon: Award, premium: false },
+  { path: '/settings', label: 'Settings', Icon: Settings, premium: false }
 ]
 
 export default function Sidebar() {
@@ -40,7 +42,7 @@ export default function Sidebar() {
               }`
             }
           >
-            <span className="text-lg">{item.icon}</span>
+            <item.Icon className="w-5 h-5" />
             <span className="flex-1">{item.label}</span>
             {item.premium && license.tier !== 'premium' && (
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-gold/20 text-gold font-semibold">PRO</span>

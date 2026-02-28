@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getRandomQuote } from '../../lib/quotes'
 import { useGamificationStore } from '../../stores/gamificationStore'
+import { Flame } from 'lucide-react'
 
 export default function TopBar() {
   const [quote, setQuote] = useState(getRandomQuote())
@@ -20,7 +21,7 @@ export default function TopBar() {
         {profile && (
           <>
             <span className="text-xs text-gray-400">
-              {'\u{1F525}'} {profile.streak_days} day streak
+              <Flame className="w-3.5 h-3.5 text-orange-400 inline" /> {profile.streak_days} day streak
             </span>
             <span className="text-xs font-semibold text-gold">
               {profile.xp} XP

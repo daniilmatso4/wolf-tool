@@ -2,9 +2,9 @@ import { create } from 'zustand'
 import type { AgentId, AgentStatus, AgentConfig, BrandAnalysis, LinkedInProspect } from '../types/agents'
 
 const AGENT_CONFIGS: AgentConfig[] = [
-  { id: 'jordan', name: 'Jordan Belfort', title: 'The Closer', avatar: '\u{1F43A}', color: 'text-gold' },
-  { id: 'donnie', name: 'Donnie Azoff', title: 'The Hustler', avatar: '\u{1F525}', color: 'text-blue-400' },
-  { id: 'naomi', name: 'Naomi Lapaglia', title: 'The Strategist', avatar: '\u{1F48E}', color: 'text-purple-400' }
+  { id: 'jordan', name: 'Jordan Belfort', title: 'The Closer', avatar: 'WolfLogo', color: 'text-gold' },
+  { id: 'donnie', name: 'Donnie Azoff', title: 'The Hustler', avatar: 'Flame', color: 'text-blue-400' },
+  { id: 'naomi', name: 'Naomi Lapaglia', title: 'The Strategist', avatar: 'Gem', color: 'text-purple-400' }
 ]
 
 interface AgentLiveState {

@@ -1,5 +1,6 @@
 import type { AgentId, AgentConfig, AgentStatus, LinkedInProspect } from '../../types/agents'
 import StatusAnimation from './StatusAnimation'
+import IconRenderer from '../icons/IconRenderer'
 
 interface AgentCardProps {
   config: AgentConfig
@@ -60,7 +61,7 @@ export default function AgentCard({
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="text-3xl">{config.avatar}</div>
+        <IconRenderer name={config.avatar} size={28} className={config.color} />
         <div className="flex-1">
           <h3 className={`font-bold ${config.color}`}>{config.name}</h3>
           <p className="text-xs text-gray-500">{config.title}</p>

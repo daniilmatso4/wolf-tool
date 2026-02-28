@@ -3,6 +3,8 @@ import { useAgentsStore } from '../stores/agentsStore'
 import { useAuthStore } from '../stores/authStore'
 import AgentCard from '../components/agents/AgentCard'
 import ResponseInbox from '../components/agents/ResponseInbox'
+import IconRenderer from '../components/icons/IconRenderer'
+import { Lock } from 'lucide-react'
 import type { AgentId } from '../types/agents'
 
 function PremiumGate() {
@@ -18,7 +20,7 @@ function PremiumGate() {
       </div>
 
       <div className="card border border-gold/20 text-center py-16 px-8">
-        <div className="text-6xl mb-4">🔒</div>
+        <Lock className="w-14 h-14 text-gray-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-white mb-2">Premium Feature</h2>
         <p className="text-gray-400 text-sm max-w-md mx-auto mb-6">
           AI Agents are available with a Premium subscription. Upgrade to unleash Jordan, Donnie, and Naomi — your automated sales wolf pack.
@@ -36,18 +38,18 @@ function PremiumGate() {
         </div>
 
         <div className="mt-10 grid grid-cols-3 gap-4 max-w-lg mx-auto">
-          <div className="bg-navy-800/50 rounded-lg p-4">
-            <div className="text-2xl mb-2">🐺</div>
+          <div className="bg-navy-800/50 rounded-lg p-4 flex flex-col items-center">
+            <IconRenderer name="WolfLogo" size={28} className="text-gold mb-2" />
             <p className="text-xs font-medium text-white">Jordan</p>
             <p className="text-xs text-gray-500">Lead Hunter</p>
           </div>
-          <div className="bg-navy-800/50 rounded-lg p-4">
-            <div className="text-2xl mb-2">🦊</div>
+          <div className="bg-navy-800/50 rounded-lg p-4 flex flex-col items-center">
+            <IconRenderer name="Flame" size={28} className="text-blue-400 mb-2" />
             <p className="text-xs font-medium text-white">Donnie</p>
             <p className="text-xs text-gray-500">Message Crafter</p>
           </div>
-          <div className="bg-navy-800/50 rounded-lg p-4">
-            <div className="text-2xl mb-2">🐆</div>
+          <div className="bg-navy-800/50 rounded-lg p-4 flex flex-col items-center">
+            <IconRenderer name="Gem" size={28} className="text-purple-400 mb-2" />
             <p className="text-xs font-medium text-white">Naomi</p>
             <p className="text-xs text-gray-500">Deal Closer</p>
           </div>

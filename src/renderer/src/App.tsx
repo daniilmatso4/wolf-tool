@@ -14,6 +14,7 @@ import { useSettingsStore } from './stores/settingsStore'
 import { useLeadsStore } from './stores/leadsStore'
 import { useGamificationStore } from './stores/gamificationStore'
 import { useAuthStore } from './stores/authStore'
+import WolfLogo from './components/icons/WolfLogo'
 import LevelUpModal from './components/gamification/LevelUpModal'
 import AchievementToast from './components/gamification/AchievementToast'
 import XPNotification from './components/gamification/XPNotification'
@@ -62,7 +63,7 @@ export default function App() {
     return (
       <div className="min-h-screen bg-navy-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-5xl mb-4 animate-pulse">🐺</div>
+          <WolfLogo size={48} className="text-gold animate-pulse mx-auto mb-4" />
           <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>

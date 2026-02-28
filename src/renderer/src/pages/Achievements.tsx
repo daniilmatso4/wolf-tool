@@ -1,5 +1,6 @@
 import { useGamificationStore } from '../stores/gamificationStore'
 import { ACHIEVEMENT_DEFS } from '../lib/achievements'
+import IconRenderer from '../components/icons/IconRenderer'
 
 export default function Achievements() {
   const achievements = useGamificationStore((s) => s.achievements)
@@ -43,13 +44,14 @@ export default function Achievements() {
               {catAchievements.map((a) => {
                 const def = ACHIEVEMENT_DEFS.find((d) => d.id === a.id)
                 const progress = Math.min(100, def ? (a.progress / def.requirement) * 100 : 0)
+                const iconName = a.icon || def?.icon || ''
                 return (
                   <div
                     key={a.id}
                     className={`card transition-all ${a.unlocked ? 'border-gold/30 bg-gold/5' : 'opacity-60'}`}
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-2xl">{a.icon || def?.icon}</span>
+                      <IconRenderer name={iconName} size={24} className={a.unlocked ? 'text-gold' : 'text-gray-500'} />
                       <div>
                         <p className={`font-semibold text-sm ${a.unlocked ? 'text-gold' : 'text-gray-400'}`}>
                           {a.name || def?.name}

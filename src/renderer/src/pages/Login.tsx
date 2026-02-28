@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useAuthStore } from '../stores/authStore'
+import { Mail } from 'lucide-react'
+import WolfLogo from '../components/icons/WolfLogo'
 
 export default function Login() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
@@ -30,7 +32,7 @@ export default function Login() {
     return (
       <div className="min-h-screen bg-navy-900 flex items-center justify-center p-4">
         <div className="card p-8 max-w-md w-full text-center">
-          <div className="text-5xl mb-4">✉️</div>
+          <Mail className="w-12 h-12 text-gold mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Check Your Email</h2>
           <p className="text-gray-400 text-sm mb-6">
             We sent a confirmation link to <span className="text-white font-medium">{email}</span>.
@@ -52,7 +54,7 @@ export default function Login() {
       <div className="card p-8 max-w-md w-full border-navy-700">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🐺</div>
+          <WolfLogo size={48} className="text-gold mx-auto mb-3" />
           <h1 className="text-2xl font-bold gold-gradient mb-1">Wolf Tool</h1>
           <p className="text-gray-400 text-sm">
             {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}

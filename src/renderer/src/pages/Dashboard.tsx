@@ -5,6 +5,8 @@ import { getRandomQuote } from '../lib/quotes'
 import { getLevelForXP, getXPProgress, getNextLevel } from '../lib/levels'
 import CampaignStats from '../components/dashboard/CampaignStats'
 import SmartQueue from '../components/dashboard/SmartQueue'
+import { Phone, Mail, TrendingUp, DollarSign, Handshake, FileText, ArrowRightLeft, Circle } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 export default function Dashboard() {
   const profile = useGamificationStore((s) => s.profile)
@@ -49,10 +51,10 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <StatCard label="Calls Today" value={todayCounts.calls} icon={'\u{1F4DE}'} color="text-blue-400" />
-        <StatCard label="Emails Today" value={todayCounts.emails} icon={'\u{2709}'} color="text-purple-400" />
-        <StatCard label="Conversion Rate" value={`${conversionRate}%`} icon={'\u{1F4C8}'} color="text-green-400" />
-        <StatCard label="Total Deals" value={profile?.total_deals || 0} icon={'\u{1F4B0}'} color="text-gold" />
+        <StatCard label="Calls Today" value={todayCounts.calls} Icon={Phone} color="text-blue-400" />
+        <StatCard label="Emails Today" value={todayCounts.emails} Icon={Mail} color="text-purple-400" />
+        <StatCard label="Conversion Rate" value={`${conversionRate}%`} Icon={TrendingUp} color="text-green-400" />
+        <StatCard label="Total Deals" value={profile?.total_deals || 0} Icon={DollarSign} color="text-gold" />
       </div>
 
       {/* Smart Queue + Campaign Stats */}
@@ -112,7 +114,7 @@ export default function Dashboard() {
             ) : (
               recentActivities.map((a) => (
                 <div key={a.id} className="flex items-center gap-2 text-sm py-1.5 border-b border-navy-700 last:border-0">
-                  <span>{activityIcon(a.type)}</span>
+                  <ActivityIcon type={a.type} />
                   <span className="text-gray-300 truncate flex-1">{a.lead_name || 'Unknown'}</span>
                   <span className="text-xs text-gray-500 capitalize">{a.type.replace('_', ' ')}</span>
                 </div>
@@ -125,10 +127,12 @@ export default function Dashboard() {
   )
 }
 
-function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: string; color: string }) {
+function StatCard({ label, value, Icon, color }: { label: string; value: string | number; Icon: LucideIcon; color: string }) {
   return (
     <div className="card flex items-center gap-3">
-      <span className={`text-2xl ${color}`}>{icon}</span>
+      <div className={`w-10 h-10 rounded-lg bg-navy-800 flex items-center justify-center ${color}`}>
+        <Icon className="w-5 h-5" />
+      </div>
       <div>
         <p className="text-2xl font-bold text-white">{value}</p>
         <p className="text-xs text-gray-500">{label}</p>
@@ -161,14 +165,16 @@ function FunnelBar({ label, count, total, color }: { label: string; count: numbe
   )
 }
 
-function activityIcon(type: string): string {
-  switch (type) {
-    case 'call': return '\u{1F4DE}'
-    case 'email': return '\u{2709}'
-    case 'meeting': return '\u{1F91D}'
-    case 'note': return '\u{1F4DD}'
-    case 'deal_closed': return '\u{1F4B0}'
-    case 'status_change': return '\u{1F504}'
-    default: return '\u{25CF}'
-  }
+const activityIconMap: Record<string, LucideIcon> = {
+  call: Phone,
+  email: Mail,
+  meeting: Handshake,
+  note: FileText,
+  deal_closed: DollarSign,
+  status_change: ArrowRightLeft,
+}
+
+function ActivityIcon({ type }: { type: string }) {
+  const Icon = activityIconMap[type] || Circle
+  return <Icon className="w-4 h-4 text-gray-400" />
 }

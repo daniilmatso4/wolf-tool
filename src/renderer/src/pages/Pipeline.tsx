@@ -99,7 +99,7 @@ function KanbanView({
                   )}
                   {lead.phone && <p className="text-xs text-gray-500 truncate">{lead.phone}</p>}
                   {lead.rating && (
-                    <p className="text-xs text-gray-500">{'\u2B50'} {lead.rating}</p>
+                    <p className="text-xs text-gray-500">{lead.rating} stars</p>
                   )}
                 </div>
               ))}
@@ -166,7 +166,7 @@ function TableView({
                   <span className="text-gold text-xs font-semibold">NO WEBSITE</span>
                 )}
               </td>
-              <td className="py-2.5 px-3 text-gray-400">{lead.rating ? `${lead.rating} \u2B50` : '-'}</td>
+              <td className="py-2.5 px-3 text-gray-400">{lead.rating ? `${lead.rating} stars` : '-'}</td>
               <td className="py-2.5 px-3">
                 <select
                   value={lead.status}
@@ -216,7 +216,7 @@ function Th({
       className="text-left py-2 px-3 text-gray-500 font-medium cursor-pointer hover:text-gray-300 select-none"
       onClick={() => onClick(field)}
     >
-      {label} {current === field ? (dir === 'asc' ? '\u25B2' : '\u25BC') : ''}
+      {label} {current === field ? (dir === 'asc' ? '^' : 'v') : ''}
     </th>
   )
 }

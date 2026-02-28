@@ -1,4 +1,5 @@
 import { useGamificationStore } from '../../stores/gamificationStore'
+import { Rocket } from 'lucide-react'
 
 export default function LevelUpModal() {
   const levelUp = useGamificationStore((s) => s.levelUpPending)
@@ -12,7 +13,7 @@ export default function LevelUpModal() {
         className="bg-navy-800 border-2 border-gold rounded-2xl p-8 max-w-md w-full mx-4 text-center animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-6xl mb-4">{'\u{1F680}'}</div>
+        <Rocket className="w-14 h-14 text-gold mx-auto mb-4" />
         <h2 className="text-3xl font-bold gold-gradient mb-2">LEVEL UP!</h2>
         <p className="text-gray-300 mb-4">
           You've reached <span className="text-gold font-bold">Level {levelUp.newLevel}</span>

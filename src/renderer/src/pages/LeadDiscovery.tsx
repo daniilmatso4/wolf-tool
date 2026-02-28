@@ -5,6 +5,7 @@ import { useLeadsStore } from '../stores/leadsStore'
 import { useSettingsStore } from '../stores/settingsStore'
 import { useGamificationStore } from '../stores/gamificationStore'
 import { formatPlaceTypes } from '../lib/categories'
+import { AlertTriangle, Star, Phone } from 'lucide-react'
 import type { PlaceResult } from '../types/search'
 
 export default function LeadDiscovery() {
@@ -107,7 +108,7 @@ export default function LeadDiscovery() {
 
         {!apiKey && (
           <p className="text-amber-400 text-sm mt-2">
-            {'\u26A0'} No API key set. Go to Settings to configure your Google Places API key.
+            <AlertTriangle className="w-4 h-4 inline mr-1" /> No API key set. Go to Settings to configure your Google Places API key.
           </p>
         )}
 
@@ -168,9 +169,9 @@ function PlaceCard({ place, onSave }: { place: PlaceResult; onSave: () => void }
         <p className="text-sm text-gray-400 truncate">{place.formatted_address}</p>
         <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
           {place.rating && (
-            <span>{'\u2B50'} {place.rating} ({place.user_ratings_total})</span>
+            <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {place.rating} ({place.user_ratings_total})</span>
           )}
-          {place.phone && <span>{'\u{1F4DE}'} {place.phone}</span>}
+          {place.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {place.phone}</span>}
           {place.types && <span>{formatPlaceTypes(place.types)}</span>}
         </div>
       </div>

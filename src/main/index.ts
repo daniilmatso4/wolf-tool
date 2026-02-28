@@ -1,6 +1,7 @@
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { autoUpdater } from 'electron-updater'
 import { initDB, closeDB } from './database/connection'
 import { runMigrations } from './database/migrations'
 import { registerLeadsIPC } from './ipc/leads.ipc'
@@ -67,6 +68,17 @@ app.whenReady().then(async () => {
   registerAuthIPC()
 
   createWindow()
+
+  // Silent auto-updater: downloads in background, installs on quit
+  if (!is.dev) {
+    autoUpdater.autoDownload = true
+    autoUpdater.autoInstallOnAppQuit = true
+    autoUpdater.logger = null
+    autoUpdater.checkForUpdates().catch(() => {})
+    setInterval(() => {
+      autoUpdater.checkForUpdates().catch(() => {})
+    }, 4 * 60 * 60 * 1000)
+  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
