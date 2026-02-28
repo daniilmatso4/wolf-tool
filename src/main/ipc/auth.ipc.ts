@@ -4,7 +4,7 @@ import { getDB, saveDB } from '../database/connection'
 
 const SUPABASE_URL = 'https://bztjzxbqiajkaelnvika.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_gpzKVc1w9C_cfl_FzIW9ow_Xwr4go5J'
-const LICENSE_API_URL = 'https://wolftool.ai/api/license/verify'
+const LICENSE_API_URL = 'https://wolfengine.co/api/license/verify'
 
 let supabase: SupabaseClient
 

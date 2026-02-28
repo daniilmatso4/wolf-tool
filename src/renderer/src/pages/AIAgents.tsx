@@ -25,7 +25,7 @@ function PremiumGate() {
         </p>
         <div className="flex flex-col items-center gap-3">
           <a
-            href="https://wolftool.ai/pricing"
+            href="https://wolfengine.co/pricing"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-gold px-8 py-3 text-sm font-semibold"
