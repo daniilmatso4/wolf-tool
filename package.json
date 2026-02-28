@@ -62,7 +62,8 @@
       {
         "provider": "github",
         "owner": "daniilmatso4",
-        "repo": "wolf-tool"
+        "repo": "wolf-tool",
+        "releaseType": "release"
       }
     ]
   },
