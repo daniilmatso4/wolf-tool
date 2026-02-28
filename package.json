@@ -1,6 +1,6 @@
 {
   "name": "wolf-of-wallstreet-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wolf of Wall Street Sales Prospecting Tool for tekta.ai",
   "main": "./out/main/index.js",
   "scripts": {
@@ -69,6 +69,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
     "date-fns": "^4.1.0",
+    "electron-store": "^11.0.2",
     "electron-updater": "^6.8.3",
     "lucide-react": "^0.575.0",
     "react": "^18.3.1",

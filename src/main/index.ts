@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { autoUpdater } from 'electron-updater'
@@ -56,6 +56,9 @@ app.whenReady().then(async () => {
   // Init database
   const db = await initDB()
   runMigrations(db)
+
+  // App version
+  ipcMain.handle('app:getVersion', () => app.getVersion())
 
   // Register IPC handlers
   registerLeadsIPC()

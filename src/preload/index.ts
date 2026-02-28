@@ -139,7 +139,10 @@ const api = {
   // Campaign Analytics
   campaign: {
     stats: () => ipcRenderer.invoke('campaign:stats')
-  }
+  },
+
+  // App info
+  getVersion: () => ipcRenderer.invoke('app:getVersion')
 }
 
 export type ElectronAPI = typeof api

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useGamificationStore } from '../../stores/gamificationStore'
 import { useAuthStore } from '../../stores/authStore'
@@ -19,13 +20,21 @@ export default function Sidebar() {
   const { user, license, signOut } = useAuthStore()
   const level = profile ? getLevelForXP(profile.xp) : null
   const progress = profile ? getXPProgress(profile.xp) : null
+  const [appVersion, setAppVersion] = useState('')
+
+  useEffect(() => {
+    window.api.getVersion().then((v: string) => setAppVersion(v)).catch(() => {})
+  }, [])
 
   return (
     <aside className="w-64 bg-navy-950 border-r border-navy-700 flex flex-col">
       {/* Logo */}
       <div className="p-5 border-b border-navy-700">
         <h1 className="text-xl font-bold gold-gradient">WOLF TOOL</h1>
-        <p className="text-xs text-gray-500 mt-1">tekta.ai Sales Engine</p>
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-xs text-gray-500">tekta.ai Sales Engine</p>
+          {appVersion && <span className="text-[10px] text-gray-600">v{appVersion}</span>}
+        </div>
       </div>
 
       {/* Navigation */}
