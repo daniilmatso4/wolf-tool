@@ -9,7 +9,13 @@ const api = {
       ipcRenderer.invoke('auth:signUp', email, password, fullName),
     signOut: () => ipcRenderer.invoke('auth:signOut'),
     getUser: () => ipcRenderer.invoke('auth:getUser'),
-    checkLicense: (email: string) => ipcRenderer.invoke('auth:checkLicense', email)
+    checkLicense: (email: string) => ipcRenderer.invoke('auth:checkLicense', email),
+    signInWithProvider: (provider: 'google' | 'github') =>
+      ipcRenderer.invoke('auth:signInWithProvider', provider),
+    onOAuthResult: (callback: (data: unknown) => void) => {
+      ipcRenderer.on('auth:oauthResult', (_e, data) => callback(data))
+      return () => { ipcRenderer.removeAllListeners('auth:oauthResult') }
+    }
   },
 
   // Leads
@@ -139,6 +145,68 @@ const api = {
   // Campaign Analytics
   campaign: {
     stats: () => ipcRenderer.invoke('campaign:stats')
+  },
+
+  // My Product
+  product: {
+    get: () => ipcRenderer.invoke('product:get'),
+    update: (data: unknown) => ipcRenderer.invoke('product:update', data),
+    isConfigured: () => ipcRenderer.invoke('product:isConfigured')
+  },
+
+  // Call Mode
+  callmode: {
+    getQueue: (limit?: number) => ipcRenderer.invoke('callmode:getQueue', limit),
+    getPrep: (leadId: string) => ipcRenderer.invoke('callmode:getPrep', leadId),
+    logOutcome: (data: unknown) => ipcRenderer.invoke('callmode:logOutcome', data),
+    startSession: (mode?: string) => ipcRenderer.invoke('callmode:startSession', mode),
+    endSession: (sessionId: string) => ipcRenderer.invoke('callmode:endSession', sessionId),
+    getSession: (sessionId: string) => ipcRenderer.invoke('callmode:getSession', sessionId)
+  },
+
+  // Follow-ups
+  followups: {
+    getDueToday: () => ipcRenderer.invoke('followups:getDueToday'),
+    getOverdue: () => ipcRenderer.invoke('followups:getOverdue'),
+    getByLead: (leadId: string) => ipcRenderer.invoke('followups:getByLead', leadId),
+    schedule: (data: unknown) => ipcRenderer.invoke('followups:schedule', data),
+    scheduleFromCadence: (leadId: string, cadenceId: string) => ipcRenderer.invoke('followups:scheduleFromCadence', leadId, cadenceId),
+    complete: (id: string) => ipcRenderer.invoke('followups:complete', id),
+    skip: (id: string) => ipcRenderer.invoke('followups:skip', id),
+    getCadences: () => ipcRenderer.invoke('followups:getCadences'),
+    saveCadence: (cadence: unknown) => ipcRenderer.invoke('followups:saveCadence', cadence),
+    deleteCadence: (id: string) => ipcRenderer.invoke('followups:deleteCadence', id)
+  },
+
+  // Scripts + Objection Playbook
+  scripts: {
+    getAll: () => ipcRenderer.invoke('scripts:getAll'),
+    save: (script: unknown) => ipcRenderer.invoke('scripts:save', script),
+    delete: (id: string) => ipcRenderer.invoke('scripts:delete', id),
+    generate: (context: unknown) => ipcRenderer.invoke('scripts:generate', context),
+    trackUsage: (id: string, success: boolean) => ipcRenderer.invoke('scripts:trackUsage', id, success),
+    getObjections: () => ipcRenderer.invoke('scripts:getObjections'),
+    saveObjection: (obj: unknown) => ipcRenderer.invoke('scripts:saveObjection', obj),
+    deleteObjection: (id: string) => ipcRenderer.invoke('scripts:deleteObjection', id),
+    generateObjections: (context: unknown) => ipcRenderer.invoke('scripts:generateObjections', context)
+  },
+
+  // Analytics
+  analytics: {
+    getVolumeTrends: (days?: number) => ipcRenderer.invoke('analytics:getVolumeTrends', days),
+    getConversionFunnel: () => ipcRenderer.invoke('analytics:getConversionFunnel'),
+    getCallHeatmap: () => ipcRenderer.invoke('analytics:getCallHeatmap'),
+    getIndustryStats: () => ipcRenderer.invoke('analytics:getIndustryStats'),
+    getWeeklyInsights: () => ipcRenderer.invoke('analytics:getWeeklyInsights')
+  },
+
+  // Email
+  email: {
+    generate: (context: unknown) => ipcRenderer.invoke('email:generate', context),
+    getTemplates: () => ipcRenderer.invoke('email:getTemplates'),
+    saveTemplate: (template: unknown) => ipcRenderer.invoke('email:saveTemplate', template),
+    deleteTemplate: (id: string) => ipcRenderer.invoke('email:deleteTemplate', id),
+    logSent: (data: unknown) => ipcRenderer.invoke('email:logSent', data)
   },
 
   // App info

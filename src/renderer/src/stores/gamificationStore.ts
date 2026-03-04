@@ -63,7 +63,12 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
   },
 
   logActivity: async (type) => {
-    const xp = XP_RULES[type]
+    let xp = XP_RULES[type]
+    // Power Hour 2x XP multiplier — check via global flag set by callModeStore
+    if ((window as any).__powerHourActive) {
+      xp = xp * 2
+    }
+
     if (xp > 0) {
       const updated = await window.api.gamification.addXP(xp)
       const oldProfile = get().profile
@@ -152,7 +157,10 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
       total_meetings: profile.total_meetings,
       total_deals: profile.total_deals,
       streak_days: profile.streak_days,
-      total_leads: totalLeads
+      total_leads: totalLeads,
+      power_hours_completed: profile.power_hours_completed || 0,
+      total_revenue: profile.total_revenue || 0,
+      longest_streak: profile.longest_streak || 0
     }
 
     for (const def of ACHIEVEMENT_DEFS) {

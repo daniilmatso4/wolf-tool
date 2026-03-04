@@ -88,6 +88,7 @@ function KanbanView({
                   key={lead.id}
                   draggable
                   onDragStart={() => handleDragStart(lead.id)}
+                  onDragEnd={() => setDraggedId(null)}
                   onClick={() => onClickLead(lead.id)}
                   className="card p-3 cursor-pointer hover:border-gold/30 transition-all duration-200 group"
                 >

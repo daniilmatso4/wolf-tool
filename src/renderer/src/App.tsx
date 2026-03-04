@@ -9,11 +9,16 @@ import BusinessDetail from './pages/BusinessDetail'
 import Achievements from './pages/Achievements'
 import Settings from './pages/Settings'
 import AIAgents from './pages/AIAgents'
+import CallMode from './pages/CallMode'
+import MyProduct from './pages/MyProduct'
+import Playbook from './pages/Playbook'
+import Analytics from './pages/Analytics'
 import Login from './pages/Login'
 import { useSettingsStore } from './stores/settingsStore'
 import { useLeadsStore } from './stores/leadsStore'
 import { useGamificationStore } from './stores/gamificationStore'
 import { useAuthStore } from './stores/authStore'
+import { useProductStore } from './stores/productStore'
 import WolfLogo from './components/icons/WolfLogo'
 import LevelUpModal from './components/gamification/LevelUpModal'
 import AchievementToast from './components/gamification/AchievementToast'
@@ -23,11 +28,13 @@ function AuthenticatedApp() {
   const loadSettings = useSettingsStore((s) => s.load)
   const loadLeads = useLeadsStore((s) => s.load)
   const loadGamification = useGamificationStore((s) => s.load)
+  const loadProduct = useProductStore((s) => s.load)
 
   useEffect(() => {
     loadSettings()
     loadLeads()
     loadGamification()
+    loadProduct()
   }, [])
 
   return (
@@ -39,8 +46,12 @@ function AuthenticatedApp() {
             <Route path="/discover" element={<LeadDiscovery />} />
             <Route path="/pipeline" element={<Pipeline />} />
             <Route path="/business/:id" element={<BusinessDetail />} />
+            <Route path="/call-mode" element={<CallMode />} />
             <Route path="/agents" element={<AIAgents />} />
+            <Route path="/playbook" element={<Playbook />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/achievements" element={<Achievements />} />
+            <Route path="/my-product" element={<MyProduct />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
         </ErrorBoundary>

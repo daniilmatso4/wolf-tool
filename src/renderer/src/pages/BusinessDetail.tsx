@@ -6,7 +6,8 @@ import { useGamificationStore } from '../stores/gamificationStore'
 import { formatPlaceTypes } from '../lib/categories'
 import SalesBrief from '../components/business/SalesBrief'
 import OwnerCard from '../components/business/OwnerCard'
-import { Phone, Mail, MapPin, Globe, Star, Tag, User, Smartphone, AtSign, ArrowLeft, Handshake, FileText, DollarSign, ArrowRightLeft, Circle } from 'lucide-react'
+import FollowUpScheduler from '../components/followups/FollowUpScheduler'
+import { Phone, Mail, MapPin, Globe, Star, Tag, User, Smartphone, AtSign, ArrowLeft, Handshake, FileText, DollarSign, ArrowRightLeft, Circle, Clock } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Activity, ActivityType, ActivityOutcome } from '../types/activity'
 import type { LeadStatus } from '../types/lead'
@@ -31,6 +32,11 @@ export default function BusinessDetail() {
   const [showLogModal, setShowLogModal] = useState<ActivityType | null>(null)
   const [logNotes, setLogNotes] = useState('')
   const [logOutcome, setLogOutcome] = useState<ActivityOutcome>('neutral')
+  const [showFollowUp, setShowFollowUp] = useState(false)
+  const [showEmailDraft, setShowEmailDraft] = useState(false)
+  const [emailDraft, setEmailDraft] = useState<{ subject: string; body: string } | null>(null)
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [emailScenario, setEmailScenario] = useState('cold_intro')
 
   useEffect(() => {
     if (id) {
@@ -39,7 +45,7 @@ export default function BusinessDetail() {
   }, [id])
 
   useEffect(() => {
-    if (lead?.notes) setNotes(lead.notes)
+    setNotes(lead?.notes ?? '')
   }, [lead?.notes])
 
   if (!lead) {
@@ -53,14 +59,32 @@ export default function BusinessDetail() {
     )
   }
 
+  const [dealValue, setDealValue] = useState('')
+  const [showDealValue, setShowDealValue] = useState(false)
+
   const handleStatusChange = async (status: LeadStatus) => {
-    await updateLead(lead.id, { status })
     if (status === 'client') {
-      const activity = { id: uuidv4(), lead_id: lead.id, type: 'deal_closed' as ActivityType, outcome: 'positive' as ActivityOutcome, notes: 'Deal closed!' }
-      await window.api.activities.create(activity)
-      await logActivity('deal_closed')
-      setActivities((prev) => [{ ...activity, created_at: new Date().toISOString() }, ...prev])
+      setShowDealValue(true)
+      return
     }
+    await updateLead(lead.id, { status })
+  }
+
+  const handleCloseDeal = async () => {
+    await updateLead(lead.id, { status: 'client' as LeadStatus })
+    const activity = {
+      id: uuidv4(),
+      lead_id: lead.id,
+      type: 'deal_closed' as ActivityType,
+      outcome: 'positive' as ActivityOutcome,
+      notes: dealValue ? `Deal closed - $${dealValue}` : 'Deal closed!',
+      deal_value: dealValue ? parseFloat(dealValue) : undefined
+    }
+    await window.api.activities.create(activity)
+    await logActivity('deal_closed')
+    setActivities((prev) => [{ ...activity, created_at: new Date().toISOString() }, ...prev])
+    setShowDealValue(false)
+    setDealValue('')
   }
 
   const handleLogActivity = async () => {
@@ -78,6 +102,10 @@ export default function BusinessDetail() {
     setShowLogModal(null)
     setLogNotes('')
     setLogOutcome('neutral')
+    // Prompt for follow-up after logging call/email
+    if (['call', 'email'].includes(showLogModal)) {
+      setShowFollowUp(true)
+    }
   }
 
   const handleSaveNotes = async () => {
@@ -92,7 +120,7 @@ export default function BusinessDetail() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div key={id} className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -152,6 +180,76 @@ export default function BusinessDetail() {
               </button>
             </div>
           </div>
+
+          {/* Draft Email */}
+          {showEmailDraft && (
+            <div className="card space-y-3">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">AI Email Draft</h3>
+              <div className="flex gap-2 mb-2">
+                <select value={emailScenario} onChange={(e) => setEmailScenario(e.target.value)} className="input-field flex-1">
+                  <option value="cold_intro">Cold Intro</option>
+                  <option value="after_positive_call">After Positive Call</option>
+                  <option value="after_voicemail">After Voicemail</option>
+                  <option value="post_meeting">Post Meeting</option>
+                  <option value="follow_up">General Follow-Up</option>
+                </select>
+                <button
+                  onClick={async () => {
+                    setEmailLoading(true)
+                    try {
+                      const draft = await window.api.email.generate({
+                        lead_name: lead.name,
+                        lead_business: lead.name,
+                        lead_industry: lead.types,
+                        scenario: emailScenario,
+                        owner_name: lead.owner_name
+                      })
+                      setEmailDraft(draft)
+                    } catch (err: any) {
+                      console.error(err)
+                    }
+                    setEmailLoading(false)
+                  }}
+                  disabled={emailLoading}
+                  className="btn-gold text-sm"
+                >
+                  {emailLoading ? 'Generating...' : 'Generate'}
+                </button>
+              </div>
+              {emailDraft && (
+                <div className="bg-navy-900 rounded-lg p-3 border border-navy-700 space-y-2">
+                  <p className="text-sm text-gray-400">Subject: <span className="text-white">{emailDraft.subject}</span></p>
+                  <pre className="text-sm text-gray-300 whitespace-pre-wrap">{emailDraft.body}</pre>
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`Subject: ${emailDraft.subject}\n\n${emailDraft.body}`)
+                      }}
+                      className="btn-outline text-xs"
+                    >
+                      Copy to Clipboard
+                    </button>
+                    <a
+                      href={`mailto:${lead.email || lead.owner_email || ''}?subject=${encodeURIComponent(emailDraft.subject)}&body=${encodeURIComponent(emailDraft.body)}`}
+                      className="btn-outline text-xs"
+                    >
+                      Open in Email Client
+                    </a>
+                  </div>
+                </div>
+              )}
+              <button onClick={() => { setShowEmailDraft(false); setEmailDraft(null) }} className="text-xs text-gray-500 hover:text-gray-300">Close</button>
+            </div>
+          )}
+
+          {!showEmailDraft && (
+            <button
+              onClick={() => setShowEmailDraft(true)}
+              className="btn-outline w-full flex items-center justify-center gap-2 text-sm"
+            >
+              <Mail className="w-4 h-4" /> Draft Email
+            </button>
+          )}
 
           {/* Notes */}
           <div className="card">
@@ -245,10 +343,55 @@ export default function BusinessDetail() {
             if (Object.keys(updates).length > 0) updateLead(lead.id, updates)
           }} />
 
+          {/* Follow-Up Scheduler */}
+          {showFollowUp && (
+            <div className="card">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Clock className="w-4 h-4" /> Schedule Follow-Up
+              </h3>
+              <FollowUpScheduler leadId={lead.id} onScheduled={() => setShowFollowUp(false)} onCancel={() => setShowFollowUp(false)} />
+            </div>
+          )}
+
+          {!showFollowUp && (
+            <button
+              onClick={() => setShowFollowUp(true)}
+              className="btn-ghost w-full border border-navy-600 flex items-center justify-center gap-2 text-sm"
+            >
+              <Clock className="w-4 h-4" /> Schedule Follow-Up
+            </button>
+          )}
+
           {/* Sales Intelligence Brief */}
           <SalesBrief lead={lead} />
         </div>
       </div>
+
+      {/* Deal Value Modal */}
+      {showDealValue && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={() => setShowDealValue(false)}>
+          <div className="bg-navy-800 border border-navy-600 rounded-xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-white mb-4">Close Deal</h3>
+            <div className="mb-4">
+              <label className="text-sm text-gray-400 block mb-1">Deal Value (optional)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                <input
+                  type="number"
+                  value={dealValue}
+                  onChange={(e) => setDealValue(e.target.value)}
+                  className="input-field w-full pl-7"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={handleCloseDeal} className="btn-gold flex-1">Close Deal</button>
+              <button onClick={() => setShowDealValue(false)} className="btn-ghost flex-1 border border-navy-600">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Log Activity Modal */}
       {showLogModal && (

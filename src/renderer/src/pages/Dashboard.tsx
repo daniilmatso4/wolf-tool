@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useGamificationStore } from '../stores/gamificationStore'
 import { useLeadsStore } from '../stores/leadsStore'
+import { useProductStore } from '../stores/productStore'
 import { getRandomQuote } from '../lib/quotes'
 import { getLevelForXP, getXPProgress, getNextLevel } from '../lib/levels'
 import CampaignStats from '../components/dashboard/CampaignStats'
 import SmartQueue from '../components/dashboard/SmartQueue'
-import { Phone, Mail, TrendingUp, DollarSign, Handshake, FileText, ArrowRightLeft, Circle } from 'lucide-react'
+import FollowUpWidget from '../components/followups/FollowUpWidget'
+import { Phone, Mail, TrendingUp, DollarSign, Handshake, FileText, ArrowRightLeft, Circle, Package, ArrowRight, Clock } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 export default function Dashboard() {
   const profile = useGamificationStore((s) => s.profile)
   const leads = useLeadsStore((s) => s.leads)
+  const isProductConfigured = useProductStore((s) => s.isConfigured)
+  const navigate = useNavigate()
   const [quote, setQuote] = useState(getRandomQuote())
   const [todayCounts, setTodayCounts] = useState({ calls: 0, emails: 0, meetings: 0, deals: 0 })
   const [recentActivities, setRecentActivities] = useState<Array<{ id: string; type: string; lead_name?: string; created_at: string }>>([])
@@ -43,6 +48,23 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Product Setup Banner */}
+      {!isProductConfigured && (
+        <div
+          onClick={() => navigate('/my-product')}
+          className="card bg-gradient-to-r from-gold/10 to-orange-500/10 border-gold/30 cursor-pointer hover:border-gold/50 transition-all flex items-center gap-4"
+        >
+          <div className="w-10 h-10 rounded-lg bg-gold/20 flex items-center justify-center">
+            <Package className="w-5 h-5 text-gold" />
+          </div>
+          <div className="flex-1">
+            <p className="text-white font-semibold">Set up your product to unlock AI-powered selling</p>
+            <p className="text-sm text-gray-400">Configure what you sell so AI can tailor scripts, call prep, and objection handling to YOUR offer.</p>
+          </div>
+          <ArrowRight className="w-5 h-5 text-gold" />
+        </div>
+      )}
+
       {/* Quote Card */}
       <div className="card bg-gradient-to-r from-navy-800 to-navy-900 border-gold/20">
         <p className="text-lg italic text-gold/90">"{quote}"</p>
@@ -57,9 +79,10 @@ export default function Dashboard() {
         <StatCard label="Total Deals" value={profile?.total_deals || 0} Icon={DollarSign} color="text-gold" />
       </div>
 
-      {/* Smart Queue + Campaign Stats */}
-      <div className="grid grid-cols-2 gap-6">
+      {/* Smart Queue + Follow-ups + Campaign Stats */}
+      <div className="grid grid-cols-3 gap-6">
         <SmartQueue />
+        <FollowUpWidget />
         <CampaignStats />
       </div>
 

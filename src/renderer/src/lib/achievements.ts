@@ -25,5 +25,13 @@ export const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { id: 'first_meeting', name: 'Face Time', description: 'Log your first meeting', icon: 'Handshake', category: 'meetings', requirement: 1, field: 'total_meetings' },
   { id: 'meetings_10', name: 'Networking Pro', description: 'Log 10 meetings', icon: 'Globe', category: 'meetings', requirement: 10, field: 'total_meetings' },
   { id: 'leads_10', name: 'Prospector', description: 'Save 10 leads', icon: 'Search', category: 'leads', requirement: 10, field: 'total_leads' },
-  { id: 'leads_50', name: 'Lead Hunter', description: 'Save 50 leads', icon: 'Target', category: 'leads', requirement: 50, field: 'total_leads' }
+  { id: 'leads_50', name: 'Lead Hunter', description: 'Save 50 leads', icon: 'Target', category: 'leads', requirement: 50, field: 'total_leads' },
+  // Phase 6: New achievements
+  { id: 'calls_500', name: 'Phone Phenom', description: 'Make 500 phone calls', icon: 'PhoneCall', category: 'calls', requirement: 500, field: 'total_calls' },
+  { id: 'power_hours_10', name: 'Machine Mode', description: 'Complete 10 Power Hours', icon: 'Zap', category: 'misc', requirement: 10, field: 'power_hours_completed' },
+  { id: 'streak_60', name: 'The Marathon', description: '60 day activity streak', icon: 'Award', category: 'streak', requirement: 60, field: 'streak_days' },
+  { id: 'calls_200', name: 'Power Player', description: 'Make 200 phone calls', icon: 'Phone', category: 'calls', requirement: 200, field: 'total_calls' },
+  { id: 'deals_50', name: 'Deal Factory', description: 'Close 50 deals', icon: 'Factory', category: 'deals', requirement: 50, field: 'total_deals' },
+  { id: 'meetings_25', name: 'Meeting Master', description: 'Log 25 meetings', icon: 'Calendar', category: 'meetings', requirement: 25, field: 'total_meetings' },
+  { id: 'leads_100', name: 'Lead Machine', description: 'Save 100 leads', icon: 'Database', category: 'leads', requirement: 100, field: 'total_leads' }
 ]

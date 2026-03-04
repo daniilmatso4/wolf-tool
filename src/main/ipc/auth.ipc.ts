@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { ipcMain, shell, BrowserWindow } from 'electron'
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { getDB, saveDB } from '../database/connection'
 
@@ -88,6 +88,25 @@ export function registerAuthIPC(): void {
     return { user: data.user, confirmEmail: !data.session }
   })
 
+  ipcMain.handle('auth:signInWithProvider', async (_e, provider: 'google' | 'github') => {
+    try {
+      const { data, error } = await sb.auth.signInWithOAuth({
+        provider,
+        options: {
+          skipBrowserRedirect: true,
+          redirectTo: 'wolfengine://auth/callback'
+        }
+      })
+      if (error) return { error: error.message }
+      if (data.url) {
+        shell.openExternal(data.url)
+      }
+      return { success: true }
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : 'OAuth failed' }
+    }
+  })
+
   ipcMain.handle('auth:signOut', async () => {
     await sb.auth.signOut()
     saveSession(null)
@@ -99,7 +118,7 @@ export function registerAuthIPC(): void {
     return { user: data.user }
   })
 
-  // Check subscription status via the website API
+  // Check subscription status via the website API (also used for license verification)
   ipcMain.handle('auth:checkLicense', async (_e, email: string) => {
     try {
       // First try the production API
@@ -147,4 +166,60 @@ export function registerAuthIPC(): void {
       }
     }
   })
+}
+
+export async function handleOAuthCallback(url: string): Promise<void> {
+  try {
+    // Parse tokens from the URL fragment (after #)
+    const hashIndex = url.indexOf('#')
+    if (hashIndex === -1) {
+      emitOAuthResult({ error: 'Invalid callback URL: no fragment' })
+      return
+    }
+
+    const fragment = url.substring(hashIndex + 1)
+    const params = new URLSearchParams(fragment)
+
+    // Check for error params (e.g. user denied access)
+    const errorParam = params.get('error')
+    if (errorParam) {
+      const errorDesc = params.get('error_description') || errorParam
+      emitOAuthResult({ error: errorDesc })
+      return
+    }
+
+    const accessToken = params.get('access_token')
+    const refreshToken = params.get('refresh_token')
+
+    if (!accessToken || !refreshToken) {
+      emitOAuthResult({ error: 'Missing tokens in callback' })
+      return
+    }
+
+    const sb = getSupabase()
+    const { data, error } = await sb.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken
+    })
+
+    if (error) {
+      emitOAuthResult({ error: error.message })
+      return
+    }
+
+    if (data.session) {
+      saveSession(JSON.stringify(data.session))
+    }
+
+    emitOAuthResult({ user: data.user })
+  } catch (err) {
+    emitOAuthResult({ error: err instanceof Error ? err.message : 'OAuth callback failed' })
+  }
+}
+
+function emitOAuthResult(result: { user?: unknown; error?: string }): void {
+  const windows = BrowserWindow.getAllWindows()
+  for (const win of windows) {
+    win.webContents.send('auth:oauthResult', result)
+  }
 }

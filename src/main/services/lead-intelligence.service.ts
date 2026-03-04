@@ -1,6 +1,7 @@
 import { net } from 'electron'
 import { leadIntelRepo } from '../database/repositories/outreach'
 import { settingsRepo } from '../database/repositories/settings'
+import { productRepo } from '../database/repositories/product'
 import { scrapeWebsite } from './website-scraper.service'
 import { withRetry } from './utils'
 
@@ -64,9 +65,29 @@ export async function generateSalesBrief(lead: {
     websiteContent ? `\nWebsite Content (first 4000 chars):\n${websiteContent.substring(0, 4000)}` : ''
   ].filter(Boolean).join('\n')
 
+  // Inject product context if configured
+  let productContext = ''
+  const myProduct = productRepo.get()
+  if (myProduct && myProduct.product_name && myProduct.elevator_pitch) {
+    const benefits = JSON.parse((myProduct.key_benefits as string) || '[]')
+    const industries = JSON.parse((myProduct.target_industries as string) || '[]')
+    const usps = JSON.parse((myProduct.unique_selling_points as string) || '[]')
+    productContext = `\n\nSELLER CONTEXT — I am selling the following:
+Company: ${myProduct.company_name || ''}
+Product: ${myProduct.product_name}
+Type: ${myProduct.product_type || ''}
+Pitch: ${myProduct.elevator_pitch}
+${benefits.length ? `Key Benefits: ${benefits.join(', ')}` : ''}
+${usps.length ? `USPs: ${usps.join(', ')}` : ''}
+${industries.length ? `Target Industries: ${industries.join(', ')}` : ''}
+${myProduct.price_range ? `Price Range: ${myProduct.price_range}` : ''}
+
+IMPORTANT: Tailor ALL talking points, pain points, and suggested approach specifically to how MY product/service can help THIS business. Make the brief actionable for selling MY offering.`
+  }
+
   const prompt = `You are a B2B sales strategist preparing a sales intelligence brief. Analyze this business and generate actionable intelligence for a sales call.
 
-${businessInfo}
+${businessInfo}${productContext}
 
 Return a JSON object with these exact keys:
 - "brief": A 2-3 sentence summary of the business, what they do, and their market position

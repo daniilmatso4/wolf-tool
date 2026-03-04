@@ -1,4 +1,5 @@
 import { net } from 'electron'
+import { productRepo } from '../database/repositories/product'
 
 function httpPost(url: string, body: object, headers: Record<string, string>): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -100,9 +101,17 @@ export async function craftOutreachMessage(
     ? `- Their name is exactly: ${prospectName}\n- Address them by their ACTUAL name "${prospectName}" — never use "there" or a placeholder`
     : `- Their name is unknown. Do NOT guess a name. Instead, reference their role or company directly. Never write "Hi there" — be creative.`
 
+  // Enhance sender context with product config if available
+  let senderContext = `${brandAnalysis.brandSummary} Products: ${brandAnalysis.products.join(', ')}`
+  const myProduct = productRepo.get()
+  if (myProduct && myProduct.product_name && myProduct.elevator_pitch) {
+    const benefits = JSON.parse((myProduct.key_benefits as string) || '[]')
+    senderContext = `${myProduct.company_name || ''} — ${myProduct.elevator_pitch}${benefits.length ? ` Key benefits: ${benefits.slice(0, 3).join(', ')}` : ''}`
+  }
+
   const prompt = `Write a LinkedIn connection request message (200-280 characters).
 
-SENDER: ${brandAnalysis.brandSummary} Products: ${brandAnalysis.products.join(', ')}
+SENDER: ${senderContext}
 RECIPIENT: ${prospectName ? `Name: ${prospectName}, ` : ''}Title: ${prospectTitle}, Company: ${prospectCompany}${prospect.aboutSnippet ? `, About: ${prospect.aboutSnippet}` : ''}
 
 EXAMPLE of correct length (240 chars):

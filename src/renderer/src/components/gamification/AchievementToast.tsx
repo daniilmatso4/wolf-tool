@@ -16,7 +16,7 @@ export default function AchievementToast() {
   if (!achievement) return null
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-slide-in">
+    <div className="fixed top-4 right-4 z-50 animate-slide-in pointer-events-none">
       <div className="bg-navy-800 border border-gold/50 rounded-xl p-4 shadow-lg shadow-gold/10 flex items-center gap-3 max-w-sm">
         <IconRenderer name={achievement.icon} size={28} className="text-gold" />
         <div>

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useGamificationStore } from '../../stores/gamificationStore'
 import { Rocket } from 'lucide-react'
 
@@ -5,10 +6,17 @@ export default function LevelUpModal() {
   const levelUp = useGamificationStore((s) => s.levelUpPending)
   const dismiss = useGamificationStore((s) => s.dismissLevelUp)
 
+  useEffect(() => {
+    if (levelUp) {
+      const timer = setTimeout(dismiss, 10000)
+      return () => clearTimeout(timer)
+    }
+  }, [levelUp])
+
   if (!levelUp) return null
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={dismiss}>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60]" onClick={dismiss}>
       <div
         className="bg-navy-800 border-2 border-gold rounded-2xl p-8 max-w-md w-full mx-4 text-center animate-fade-in"
         onClick={(e) => e.stopPropagation()}

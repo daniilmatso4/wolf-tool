@@ -10,6 +10,9 @@ export interface UserProfile {
   total_meetings: number
   total_deals: number
   total_leads: number
+  total_revenue?: number
+  power_hours_completed?: number
+  longest_streak?: number
 }
 
 export interface Achievement {

@@ -3,15 +3,19 @@ import { NavLink } from 'react-router-dom'
 import { useGamificationStore } from '../../stores/gamificationStore'
 import { useAuthStore } from '../../stores/authStore'
 import { getLevelForXP, getXPProgress } from '../../lib/levels'
-import { BarChart3, Search, ClipboardList, Bot, Award, Settings } from 'lucide-react'
+import { BarChart3, Search, ClipboardList, Bot, Award, Settings, Phone, BookOpen, TrendingUp, Package } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 const navItems: { path: string; label: string; Icon: LucideIcon; premium: boolean }[] = [
   { path: '/', label: 'Dashboard', Icon: BarChart3, premium: false },
+  { path: '/call-mode', label: 'Call Mode', Icon: Phone, premium: false },
   { path: '/discover', label: 'Lead Discovery', Icon: Search, premium: false },
   { path: '/pipeline', label: 'Pipeline', Icon: ClipboardList, premium: false },
+  { path: '/playbook', label: 'Playbook', Icon: BookOpen, premium: false },
   { path: '/agents', label: 'AI Agents', Icon: Bot, premium: true },
+  { path: '/analytics', label: 'Analytics', Icon: TrendingUp, premium: false },
   { path: '/achievements', label: 'Achievements', Icon: Award, premium: false },
+  { path: '/my-product', label: 'My Product', Icon: Package, premium: false },
   { path: '/settings', label: 'Settings', Icon: Settings, premium: false }
 ]
 

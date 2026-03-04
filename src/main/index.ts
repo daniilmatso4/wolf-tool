@@ -12,6 +12,31 @@ import { registerSearchIPC } from './ipc/search.ipc'
 import { registerAgentsIPC } from './ipc/agents.ipc'
 import { registerMonitorIPC } from './ipc/monitor.ipc'
 import { registerAuthIPC } from './ipc/auth.ipc'
+import { registerProductIPC } from './ipc/product.ipc'
+import { registerCallModeIPC } from './ipc/callmode.ipc'
+import { registerFollowUpsIPC } from './ipc/followups.ipc'
+import { registerScriptsIPC } from './ipc/scripts.ipc'
+import { registerAnalyticsIPC } from './ipc/analytics.ipc'
+import { registerEmailIPC } from './ipc/email.ipc'
+import { handleOAuthCallback } from './ipc/auth.ipc'
+
+const PROTOCOL = 'wolfengine'
+
+// Register as default protocol handler
+if (process.defaultApp) {
+  // Dev mode: register with path to electron executable + script
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [process.argv[1]])
+  }
+} else {
+  app.setAsDefaultProtocolClient(PROTOCOL)
+}
+
+// Single instance lock — required so Windows routes deep links to existing instance
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.quit()
+}
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -46,6 +71,33 @@ function createWindow(): void {
   }
 }
 
+// Windows/Linux: deep link arrives via second-instance event
+app.on('second-instance', (_event, argv) => {
+  // The deep link URL is the last argument
+  const url = argv.find((arg) => arg.startsWith(`${PROTOCOL}://`))
+  if (url) {
+    handleDeepLink(url)
+  }
+  // Focus existing window
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win) {
+    if (win.isMinimized()) win.restore()
+    win.focus()
+  }
+})
+
+// macOS: deep link arrives via open-url event
+app.on('open-url', (event, url) => {
+  event.preventDefault()
+  handleDeepLink(url)
+})
+
+function handleDeepLink(url: string): void {
+  if (url.startsWith(`${PROTOCOL}://auth/callback`)) {
+    handleOAuthCallback(url)
+  }
+}
+
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.tekta.wolf-tool')
 
@@ -69,8 +121,20 @@ app.whenReady().then(async () => {
   registerAgentsIPC()
   registerMonitorIPC()
   registerAuthIPC()
+  registerProductIPC()
+  registerCallModeIPC()
+  registerFollowUpsIPC()
+  registerScriptsIPC()
+  registerAnalyticsIPC()
+  registerEmailIPC()
 
   createWindow()
+
+  // Cold-start deep link: check if app was launched with a protocol URL (Windows)
+  const deepLinkUrl = process.argv.find((arg) => arg.startsWith(`${PROTOCOL}://`))
+  if (deepLinkUrl) {
+    handleDeepLink(deepLinkUrl)
+  }
 
   // Silent auto-updater: downloads in background, installs on quit
   if (!is.dev) {

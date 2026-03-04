@@ -58,6 +58,12 @@
       "installerIcon": "resources/icon.ico",
       "uninstallerIcon": "resources/icon.ico"
     },
+    "protocols": [
+      {
+        "name": "Wolf Tool OAuth",
+        "schemes": ["wolfengine"]
+      }
+    ],
     "publish": [
       {
         "provider": "github",
